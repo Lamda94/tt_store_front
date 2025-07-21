@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface ICart {
   article_id: number;
@@ -10,20 +10,23 @@ export interface ICart {
 
 const initialState: ICart = {
   article_id: 0,
-  image: '',
-  name: '',
+  image: "",
+  name: "",
   price: 0,
-  quantity: 0
+  quantity: 0,
 };
 
-
 const cartSlice = createSlice({
-  name: 'cart',
+  name: "cart",
   initialState,
   reducers: {
     addProduct: (state, action: PayloadAction<ICart>) => {
       if (state.article_id !== action.payload.article_id) {
-        state = action.payload;
+        state.article_id = action.payload.article_id;
+        state.image = action.payload.image;
+        state.name = action.payload.name;
+        state.price = action.payload.price;
+        state.quantity = action.payload.quantity;
       }
     },
   },

@@ -14,7 +14,8 @@
     "ramda": "^0.31.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "react-redux": "^9.2.0"
+    "react-redux": "^9.2.0",
+    "redux-persist": "^6.0.0"
   },
   "devDependencies": {
     "@types/node": "^20",

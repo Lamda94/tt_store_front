@@ -1,10 +1,10 @@
-    "use client";
+"use client";
 
 import { useState, useEffect } from 'react';
 import { useAppSelector } from '@/lib/hooks';
 import { IProduct } from '@/lib/features/products/productSlice';
 import ProductCard from './ProductCard';
-import ProductModal from '../ProductModal';
+import ProductModal from './ProductModal';
 
 
 const ProductGrid = () => {
@@ -17,8 +17,6 @@ const ProductGrid = () => {
     useEffect(() => {
         if (filter === '*') {
             setFilteredProducts(allProducts);
-        } else {
-            setFilteredProducts(allProducts.filter(p => p.category === filter));
         }
     }, [filter]);
 
@@ -51,12 +49,6 @@ const ProductGrid = () => {
                     {filteredProducts.map(product => (
                         <ProductCard key={product.id} product={product} modalState={setModal} dataModalState={setDataModal}/>
                     ))}
-                </div>
-
-                <div className="flex-c-m flex-w w-full p-t-45">
-                    <a href="#" className="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04">
-                        Load More
-                    </a>
                 </div>
             </div>
             {
