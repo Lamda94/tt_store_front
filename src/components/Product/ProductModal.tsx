@@ -20,10 +20,10 @@ const ProductModal = ({ modalState, data }: Props) => {
   const handleAddToCart = () => {
     dispatch(
       addProduct({
-        article_id: data.id,
-        image: data.image,
-        price: data.price,
-        name: data.name,
+        article_id: data.article_id,
+        image: data.article_image,
+        price: data.article_price,
+        name: data.article_name,
         quantity,
       })
     );
@@ -55,7 +55,7 @@ const ProductModal = ({ modalState, data }: Props) => {
                     <div className="item-slick3">
                       <div className="wrap-pic-w pos-relative">
                         <Image
-                          src={data!.image}
+                          src={data!.article_image}
                           alt="IMG-PRODUCT"
                           width={500}
                           height={600}
@@ -63,7 +63,7 @@ const ProductModal = ({ modalState, data }: Props) => {
                         />
                         <a
                           className="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04"
-                          href={data!.image}
+                          href={data!.article_image}
                         >
                           <i className="fa fa-expand"></i>
                         </a>
@@ -77,12 +77,12 @@ const ProductModal = ({ modalState, data }: Props) => {
             <div className="col-md-6 col-lg-5 p-b-30">
               <div className="p-r-50 p-t-5 p-lr-0-lg">
                 <h4 className="mtext-105 cl2 js-name-detail p-b-14">
-                  {data!.name}
+                  {data!.article_name}
                 </h4>
 
-                <span className="mtext-106 cl2">${data!.price}</span>
+                <span className="mtext-106 cl2">${data!.article_price}</span>
 
-                <p className="stext-102 cl3 p-t-23">{data!.descriptions}</p>
+                <p className="stext-102 cl3 p-t-23">{data!.article_description}</p>
 
                 <div className="p-t-33">
                   <div className="flex-w flex-r-m p-b-10">

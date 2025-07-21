@@ -1,24 +1,28 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { useAppSelector } from '@/lib/hooks';
-import { IProduct } from '@/lib/features/products/productSlice';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { fetchProducts, IProduct } from '@/lib/features/products/productSlice';
 import ProductCard from './ProductCard';
 import ProductModal from './ProductModal';
 
 
 const ProductGrid = () => {
-    const allProducts = useAppSelector((state) => state.products);
+    const dispatch = useAppDispatch();
+    
+    const status = useAppSelector((state) => state.products.status);
+    const allProducts = useAppSelector<IProduct[] | null>((state) => state.products.items);
     const [filter, setFilter] = useState('*');
-    const [filteredProducts, setFilteredProducts] = useState<IProduct[]>([]);
     const [modal, setModal] = useState(false)
-    const [dataModal, setDataModal ] = useState<IProduct>(allProducts[0]) 
+    const [dataModal, setDataModal ] = useState<IProduct | null>(null);
 
     useEffect(() => {
-        if (filter === '*') {
-            setFilteredProducts(allProducts);
+        if (status === 'idle') {
+            dispatch(fetchProducts());
         }
-    }, [filter]);
+        console.log(allProducts, "products");
+        
+    }, [status, dispatch]);
 
     const handleFilter = (category: string) => {
         setFilter(category);
@@ -27,6 +31,14 @@ const ProductGrid = () => {
     const filterButtons = [
         { key: '*', label: 'All Products' },
     ];
+
+    if (status === 'loading') {
+        return <div className="container p-t-100 p-b-100">Cargando productos...</div>;
+    }
+
+    if (status === 'failed') {
+        return <div className="container p-t-100 p-b-100">Error al cargar los productos.</div>;
+    }
 
     return (
         <div className="bg0 m-t-23 p-b-140">
@@ -46,13 +58,13 @@ const ProductGrid = () => {
                 </div>
 
                 <div className="row">
-                    {filteredProducts.map(product => (
-                        <ProductCard key={product.id} product={product} modalState={setModal} dataModalState={setDataModal}/>
+                    {allProducts?.map(product => (
+                        <ProductCard key={product.article_id} product={product} modalState={setModal} dataModalState={setDataModal}/>
                     ))}
                 </div>
             </div>
             {
-                modal && <ProductModal modalState={setModal} data={dataModal}/>
+                modal && <ProductModal modalState={setModal} data={dataModal!}/>
             }
             
         </div>

@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface ICart {
-  article_id: number;
+  article_id: string;
   image: string;
   name: string;
   price: number;
@@ -9,7 +9,7 @@ export interface ICart {
 }
 
 const initialState: ICart = {
-  article_id: 0,
+  article_id: "",
   image: "",
   name: "",
   price: 0,
