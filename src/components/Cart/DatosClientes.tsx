@@ -1,5 +1,7 @@
+import { addPayment, ITransactionData } from "@/lib/features/payment/paymentSlice";
 import { IAcceptanceUrl } from "@/lib/features/tokens/TokenSlice";
-import React from "react";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import React, { useState } from "react";
 
 interface Props {
   total: number;
@@ -7,8 +9,55 @@ interface Props {
   tokens: IAcceptanceUrl;
 }
 
+const initialState = {
+  customer: {
+    customer_first_name: "",
+    customer_last_name: "",
+    customer_email: "",
+    customer_phone_number: "",
+    customer_address: "",
+  },
+  order: {
+    order_article_id: "",
+    order_amount: 0,
+    order_article_price: 0,
+    order_total: 0,
+  },
+  tarjeta: {
+    titular: "",
+    tarjeta_number: 0,
+    verify_code: 0,
+    expired_date: "",
+  },
+  tokens: {
+    acceptance_token: "",
+    personal_data_token: "",
+  },
+};
+
 export default function DatosClientes({ total, stepState, tokens }: Props) {
+  const dispatch = useAppDispatch();
+
+  const [form, setForm] = useState(initialState);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setForm({ ...form, customer: { ...form.customer, [name]: value } });
+  };
+
+  interface HandleSubmitEvent extends React.MouseEvent<HTMLButtonElement, MouseEvent> {}
   const handleStep = () => stepState(2);
+
+  const handleSubmit = (e: HandleSubmitEvent) => {
+    e.preventDefault();
+    console.log(form, "form");
+    
+    dispatch(
+      addPayment(form)
+    );
+    handleStep()
+  };
+
   return (
     <div className="col-sm-10 col-lg-7 col-xl-5 m-lr-auto m-b-50">
       <div className="bor10 p-lr-40 p-t-30 p-b-40 m-l-63 m-r-40 m-lr-0-xl p-lr-15-sm">
@@ -20,7 +69,9 @@ export default function DatosClientes({ total, stepState, tokens }: Props) {
                 <input
                   className="stext-111 cl8 plh3 size-111 p-lr-15"
                   type="text"
-                  name="state"
+                  name="customer_first_name"
+                  value={form.customer.customer_first_name}
+                  onChange={handleChange}
                   placeholder="Nombre"
                 />
               </div>
@@ -34,7 +85,9 @@ export default function DatosClientes({ total, stepState, tokens }: Props) {
                 <input
                   className="stext-111 cl8 plh3 size-111 p-lr-15"
                   type="text"
-                  name="state"
+                   name="customer_last_name"
+                  value={form.customer.customer_last_name}
+                  onChange={handleChange}
                   placeholder="Apellido"
                 />
               </div>
@@ -48,7 +101,9 @@ export default function DatosClientes({ total, stepState, tokens }: Props) {
                 <input
                   className="stext-111 cl8 plh3 size-111 p-lr-15"
                   type="text"
-                  name="state"
+                  name="customer_email"
+                  value={form.customer.customer_email}
+                  onChange={handleChange}
                   placeholder="Correo"
                 />
               </div>
@@ -62,7 +117,9 @@ export default function DatosClientes({ total, stepState, tokens }: Props) {
                 <input
                   className="stext-111 cl8 plh3 size-111 p-lr-15"
                   type="text"
-                  name="state"
+                  name="customer_phone_number"
+                  value={form.customer.customer_phone_number}
+                  onChange={handleChange}
                   placeholder="Telefono"
                 />
               </div>
@@ -76,7 +133,9 @@ export default function DatosClientes({ total, stepState, tokens }: Props) {
                 <input
                   className="stext-111 cl8 plh3 size-111 p-lr-15"
                   type="text"
-                  name="state"
+                   name="customer_address"
+                  value={form.customer.customer_address}
+                  onChange={handleChange}
                   placeholder="Direccion"
                 />
               </div>
@@ -141,7 +200,7 @@ export default function DatosClientes({ total, stepState, tokens }: Props) {
 
         <button
           className="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer"
-          onClick={handleStep}
+          onClick={handleSubmit}
         >
           Ir a pagar
         </button>

@@ -35,7 +35,7 @@ export default function CartPage() {
     subtotal: 0,
   });
   const [step, setStep] = useState(1)
-  const [paymentData, setPaymentData] = useState<ITransactionData>(payment)
+  const [paymentData, setPaymentData] = useState<ITransactionData | null>(null)
 
   useEffect(() => {
     if (status === "idle") {
@@ -48,17 +48,16 @@ export default function CartPage() {
       total: cartItems.price * cartItems.quantity!,
       subtotal: cartItems.price * cartItems.quantity!,
     });
-    const tmp = {...paymentData};
-
-    tmp.order.order_article_id = cartItems.article_id
-    tmp.order.order_amount = cartItems.quantity!
-    tmp.order.order_article_price = cartItems.price
-    tmp.order.order_total = total;
-
-    setPaymentData(tmp);
-    console.log(tmp);
     
-  });
+    if(paymentData){
+      const tmp = {...paymentData};
+      tmp.order.order_article_id = cartItems.article_id
+      tmp.order.order_amount = cartItems.quantity!
+      tmp.order.order_article_price = cartItems.price
+      tmp.order.order_total = total;
+      setPaymentData(tmp);
+    }
+  },[statusPayment, payment]);
 
   const handleQuantityChange = (id: number, delta: number) => {
     setCartItems((currentItems) => {
@@ -77,10 +76,7 @@ export default function CartPage() {
         <div className="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
           <Link href="/" className="stext-109 cl8 hov-cl1 trans-04">
             Home
-            <i
-              className="fa fa-angle-right m-l-9 m-r-10"
-              aria-hidden="true"
-            ></i>
+            <i className="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
           </Link>
           <span className="stext-109 cl4">Shopping Cart</span>
         </div>
@@ -126,7 +122,7 @@ export default function CartPage() {
                                   handleQuantityChange(cartItems.quantity!, -1)
                                 }
                               >
-                                <i className="fs-16 zmdi zmdi-minus"></i>
+                              <i className="fs-16 zmdi zmdi-minus"></i>
                               </div>
                               <input
                                 className="mtext-104 cl3 txt-center num-product"

@@ -1,6 +1,6 @@
 
 import { fetchTransactionAPI } from "@/service/payments/payments.service";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface ICustomer {
   customer_first_name: string;
@@ -78,7 +78,27 @@ export const fetchTransaction = createAsyncThunk("Transaction/fetchTransaction",
 const transactionSlice = createSlice({
   name: "Transaction",
   initialState,
-  reducers: {},
+  reducers: {
+    addPayment: (state, action: PayloadAction<ITransactionData>) => {
+      if (state.items.order.order_article_id !== action.payload.order.order_article_id) {
+        state.items.customer.customer_first_name = action.payload.customer.customer_first_name;
+        state.items.customer.customer_last_name = action.payload.customer.customer_last_name;
+        state.items.customer.customer_email = action.payload.customer.customer_email; 
+        state.items.customer.customer_phone_number = action.payload.customer.customer_phone_number;
+        state.items.customer.customer_address = action.payload.customer.customer_address;
+        state.items.order.order_article_id = action.payload.order.order_article_id;
+        state.items.order.order_amount = action.payload.order.order_amount;
+        state.items.order.order_article_price = action.payload.order.order_article_price;
+        state.items.order.order_total = action.payload.order.order_total;
+        state.items.tarjeta.titular = action.payload.tarjeta.titular;
+        state.items.tarjeta.tarjeta_number = action.payload.tarjeta.tarjeta_number;
+        state.items.tarjeta.verify_code = action.payload.tarjeta.verify_code;
+        state.items.tarjeta.expired_date = action.payload.tarjeta.expired_date;
+        state.items.tokens.acceptance_token = action.payload.tokens.acceptance_token;
+        state.items.tokens.personal_data_token = action.payload.tokens.personal_data_token;
+      }
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchTransaction.pending, (state) => {
@@ -94,4 +114,5 @@ const transactionSlice = createSlice({
   },
 });
 
+export const { addPayment } = transactionSlice.actions;
 export default transactionSlice.reducer;
