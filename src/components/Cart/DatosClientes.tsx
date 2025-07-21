@@ -1,47 +1,21 @@
-import { addPayment, ITransactionData } from "@/lib/features/payment/paymentSlice";
+import { ITransactionData } from "@/lib/features/payment/paymentSlice";
 import { IAcceptanceUrl } from "@/lib/features/tokens/TokenSlice";
-import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import React, { useState } from "react";
 
 interface Props {
   total: number;
   stepState: (value: number) => void;
+  paymentState: (value: ITransactionData) => void;
   tokens: IAcceptanceUrl;
+  paymentData: ITransactionData;
 }
 
-const initialState = {
-  customer: {
-    customer_first_name: "",
-    customer_last_name: "",
-    customer_email: "",
-    customer_phone_number: "",
-    customer_address: "",
-  },
-  order: {
-    order_article_id: "",
-    order_amount: 0,
-    order_article_price: 0,
-    order_total: 0,
-  },
-  tarjeta: {
-    titular: "",
-    tarjeta_number: 0,
-    verify_code: 0,
-    expired_date: "",
-  },
-  tokens: {
-    acceptance_token: "",
-    personal_data_token: "",
-  },
-};
-
-export default function DatosClientes({ total, stepState, tokens }: Props) {
-  const dispatch = useAppDispatch();
-
-  const [form, setForm] = useState(initialState);
-
+export default function DatosClientes({ total, stepState, tokens, paymentState, paymentData }: Props) {
+  const [form, setForm] = useState(paymentData);
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    
     setForm({ ...form, customer: { ...form.customer, [name]: value } });
   };
 
@@ -49,12 +23,12 @@ export default function DatosClientes({ total, stepState, tokens }: Props) {
   const handleStep = () => stepState(2);
 
   const handleSubmit = (e: HandleSubmitEvent) => {
-    e.preventDefault();
-    console.log(form, "form");
+    e.preventDefault(); 
+    const transaction = { ...form };
+    transaction.tokens.acceptance_token = tokens.presigned_acceptance.token;
+    transaction.tokens.personal_data_token = tokens.presigned_personal_data_auth.token;
     
-    dispatch(
-      addPayment(form)
-    );
+    paymentState(transaction)
     handleStep()
   };
 
@@ -146,8 +120,9 @@ export default function DatosClientes({ total, stepState, tokens }: Props) {
           <input
             className="form-check-input"
             type="checkbox"
-            value=""
             id="checkTerminos"
+            name="acceptance_token"
+            value={tokens.presigned_acceptance.token}
             required
           />
           <label className="form-check-label" htmlFor="checkTerminos">
@@ -170,8 +145,9 @@ export default function DatosClientes({ total, stepState, tokens }: Props) {
           <input
             className="form-check-input"
             type="checkbox"
-            value=""
             id="checkDatos"
+            name="personal_data_token"
+            value={tokens.presigned_personal_data_auth.token}
             required
           />
           <label className="form-check-label" htmlFor="checkDatos">

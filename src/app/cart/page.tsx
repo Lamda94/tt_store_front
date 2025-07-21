@@ -15,6 +15,32 @@ interface ITotales {
   subtotal: number;
 }
 
+const initialState:ITransactionData = {
+  customer: {
+    customer_first_name: "",
+    customer_last_name: "",
+    customer_email: "",
+    customer_phone_number: "",
+    customer_address: "",
+  },
+  order: {
+    order_article_id: "",
+    order_amount: 0,
+    order_article_price: 0,
+    order_total: 0,
+  },
+  tarjeta: {
+    titular: "",
+    tarjeta_number: 0,
+    verify_code: 0,
+    expired_date: "",
+  },
+  tokens: {
+    acceptance_token: "",
+    personal_data_token: "",
+  },
+};
+
 export default function CartPage() {
   const dispatch = useAppDispatch();
 
@@ -23,10 +49,7 @@ export default function CartPage() {
     (state) => state.tokens.items
   );
 
-  const statusPayment = useAppSelector((state) => state.payment.status);
-  const payment = useAppSelector<ITransactionData>(
-    (state) => state.payment.items
-  );
+  const [payment, setPayment] = useState<ITransactionData>(initialState);
 
   const cartData = useAppSelector((state) => state.cart);
   const [cartItems, setCartItems] = useState<ICart>(cartData);
@@ -35,7 +58,6 @@ export default function CartPage() {
     subtotal: 0,
   });
   const [step, setStep] = useState(1)
-  const [paymentData, setPaymentData] = useState<ITransactionData | null>(null)
 
   useEffect(() => {
     if (status === "idle") {
@@ -49,15 +71,15 @@ export default function CartPage() {
       subtotal: cartItems.price * cartItems.quantity!,
     });
     
-    if(paymentData){
-      const tmp = {...paymentData};
-      tmp.order.order_article_id = cartItems.article_id
-      tmp.order.order_amount = cartItems.quantity!
-      tmp.order.order_article_price = cartItems.price
-      tmp.order.order_total = total;
-      setPaymentData(tmp);
-    }
-  },[statusPayment, payment]);
+    const tmp = {...initialState};
+    
+    tmp.order.order_article_id = cartItems.article_id
+    tmp.order.order_amount = cartItems.quantity!
+    tmp.order.order_article_price = cartItems.price
+    tmp.order.order_total = total;
+    
+    setPayment(tmp)
+  },[]);
 
   const handleQuantityChange = (id: number, delta: number) => {
     setCartItems((currentItems) => {
@@ -153,9 +175,17 @@ export default function CartPage() {
             </div>
             {
               step == 1 ? (
-                <DatosClientes stepState={setStep} total={total} tokens={tokens!}/>
+                <DatosClientes 
+                  paymentData={payment}
+                  paymentState={setPayment}
+                  stepState={setStep} 
+                  total={total} 
+                  tokens={tokens!} 
+                />
               ) :(
-                <DatosTarjeta total={total} />
+                <DatosTarjeta 
+                  paymentData={payment}
+                />
               )
             }
           </div>

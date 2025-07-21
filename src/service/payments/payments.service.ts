@@ -17,6 +17,7 @@ export const fetchTransactionAPI = async (data:ITransactionData): Promise<ITrans
   if (!response.status) {
     throw new Error('No se pudieron obtener los productos');
   }
-
+  console.log(response, 'response de axios');
+  
   return response.data;
 };
